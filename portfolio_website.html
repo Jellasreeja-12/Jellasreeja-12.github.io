@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sreeja Jella | Portfolio</title>
+    
+    <!-- Google Fonts: JetBrains Mono for Code, Work Sans for clean interface -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=Work+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Lucide Icons CDN -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <!-- Initials Favicon Data URI -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100%25' height='100%25' fill='%23121b16'/%3E%3Ctext x='50%25' y='55%25' font-family='JetBrains Mono, monospace' font-weight='bold' font-size='42' fill='%2322c55e' dominant-baseline='middle' text-anchor='middle'%3ESJ%3C/text%3E%3C/svg%3E">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        mono: ['"JetBrains Mono"', 'monospace'],
+                        sans: ['"Work Sans"', 'sans-serif'],
+                    },
+                    colors: {
+                        terminal: {
+                            bg: '#080d0a',
+                            window: '#0d1611',
+                            border: '#1b3024',
+                            accent: '#22c55e',
+                            accentHover: '#4ade80',
+                            text: '#cbd5e1',
+                            muted: '#64748b'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #080d0a;
+            color: #cbd5e1;
+        }
+        /* Hide scrollbars but keep functionality */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        /* Caret Blinking Animation */
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+        .cursor-blink {
+            animation: blink 1s infinite;
+        }
+    </style>
+</head>
+<body class="font-sans antialiased min-h-screen flex flex-col justify-between selection:bg-terminal-accent selection:text-terminal-bg">
+
+    <!-- Top Status Bar / Header -->
+    <header class="border-b border-terminal-border/40 bg-terminal-window/80 backdrop-blur sticky top-0 z-50 px-4 py-3">
+        <div class="max-w-5xl mx-auto flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="h-3 w-3 rounded-full bg-red-500"></div>
+                <div class="h-3 w-3 rounded-full bg-yellow-500"></div>
+                <div class="h-3 w-3 rounded-full bg-terminal-accent"></div>
+                <span class="text-xs font-mono text-terminal-accent/80 ml-2 hidden sm:inline">guest@sreeja-jella: ~</span>
+            </div>
+            
+            <nav class="flex space-x-1 font-mono text-xs">
+                <button onclick="runCommand('cat about.md')" class="px-2 py-1 text-terminal-text hover:text-terminal-accent transition-colors">about.md</button>
+                <button onclick="runCommand('cat skills.sh')" class="px-2 py-1 text-terminal-text hover:text-terminal-accent transition-colors">skills.sh</button>
+                <button onclick="runCommand('ls projects/')" class="px-2 py-1 text-terminal-text hover:text-terminal-accent transition-colors">projects/</button>
+                <button onclick="runCommand('cat education.md')" class="px-2 py-1 text-terminal-text hover:text-terminal-accent transition-colors">education.md</button>
+                <button onclick="runCommand('cat contact.py')" class="px-2 py-1 text-terminal-text hover:text-terminal-accent transition-colors">contact.py</button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="flex-grow max-w-5xl w-full mx-auto px-4 py-6 md:py-12 flex flex-col gap-6">
+        
+        <!-- Welcome banner -->
+        <section class="mb-4">
+            <h1 class="text-3xl md:text-5xl font-bold tracking-tight text-white mb-2">
+                Sreeja Jella
+            </h1>
+            <p class="text-terminal-accent font-mono text-sm md:text-base">
+                &gt; Aspiring Software Engineer | Data Science & Python Enthusiast
+            </p>
+        </section>
+
+        <!-- Interactive Terminal Simulator Window -->
+        <section class="border border-terminal-border rounded-lg bg-terminal-window shadow-2xl flex flex-col h-[550px] overflow-hidden">
+            <!-- Window Tab Area -->
+            <div class="bg-terminal-bg px-4 py-2 border-b border-terminal-border flex items-center justify-between text-xs font-mono text-terminal-muted">
+                <span>sreeja_jella_terminal.sh</span>
+                <span>Bash (v5.0.17)</span>
+            </div>
+
+            <!-- Terminal Output Area -->
+            <div id="terminal-screen" class="p-4 flex-grow overflow-y-auto font-mono text-sm space-y-4 no-scrollbar">
+                <!-- System Diagnostics -->
+                <div class="text-terminal-muted text-xs">
+                    System initialization complete. Connected safely via local-host.<br>
+                    Type <span class="text-terminal-accent">help</span> to view available terminal actions.
+                </div>
+
+                <!-- Live Command Streams Go Here Dynamically -->
+                <div id="command-log" class="space-y-4"></div>
+
+                <!-- Simulation typing section -->
+                <div id="typing-prompt" class="flex items-center space-x-2 hidden">
+                    <span class="text-terminal-accent">guest@sreeja-jella:~$</span>
+                    <span id="typing-text" class="text-white"></span>
+                    <span class="h-4 w-2 bg-terminal-accent cursor-blink"></span>
+                </div>
+            </div>
+
+            <!-- Shell Command Input Footer -->
+            <form id="terminal-form" class="border-t border-terminal-border bg-terminal-bg p-3 flex items-center">
+                <label for="cli-input" class="text-terminal-accent font-mono text-sm mr-2 select-none">guest@sreeja-jella:~$</label>
+                <input type="text" id="cli-input" autocomplete="off" placeholder="type 'help' or click navigational files above..." class="flex-grow bg-transparent text-white border-none outline-none focus:ring-0 font-mono text-sm text-terminal-accent">
+                <button type="submit" class="text-xs bg-terminal-border hover:bg-terminal-accent hover:text-terminal-bg px-3 py-1.5 rounded transition-all font-mono font-medium text-terminal-text ml-2">Run</button>
+            </form>
+        </section>
+
+        <!-- Dynamic Content Backup Area (Accessible, SEO-Friendly, and quick-viewable below) -->
+        <section class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+            
+            <!-- Quick Profile Bio Card -->
+            <div class="border border-terminal-border/60 bg-terminal-window/40 rounded-lg p-6">
+                <div class="flex items-center space-x-2 mb-3">
+                    <i data-lucide="terminal" class="h-4 w-4 text-terminal-accent"></i>
+                    <h3 class="text-lg font-bold text-white">System Profile</h3>
+                </div>
+                <p class="text-sm text-terminal-text leading-relaxed">
+                    Passionate Computer Science & Engineering (Data Science) student at <strong class="text-white">Geethanjali College of Engineering and Technology (GCET)</strong>. Focused on backend engineering, data science pipelines, threat detection engineering, and crafting efficient algorithms. 
+                </p>
+                <div class="mt-4 flex flex-wrap gap-2">
+                    <span class="px-2.5 py-0.5 rounded text-xs bg-terminal-border/60 text-terminal-accent font-mono">GCET '27</span>
+                    <span class="px-2.5 py-0.5 rounded text-xs bg-terminal-border/60 text-terminal-accent font-mono">Roll: 23R11A67B8</span>
+                    <span class="px-2.5 py-0.5 rounded text-xs bg-terminal-border/60 text-terminal-accent font-mono">ID: CSE-Data Science</span>
+                </div>
+            </div>
+
+            <!-- Quick Contacts Card -->
+            <div class="border border-terminal-border/60 bg-terminal-window/40 rounded-lg p-6 flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center space-x-2 mb-3">
+                        <i data-lucide="link" class="h-4 w-4 text-terminal-accent"></i>
+                        <h3 class="text-lg font-bold text-white">Active Pipelines</h3>
+                    </div>
+                    <ul class="space-y-2 text-sm text-terminal-text font-mono">
+                        <li class="flex items-center space-x-2">
+                            <i data-lucide="linkedin" class="h-4 w-4 text-terminal-muted"></i>
+                            <a href="https://www.linkedin.com/in/sreeja-jella" target="_blank" class="hover:text-terminal-accent hover:underline">linkedin.com/in/sreeja-jella</a>
+                        </li>
+                        <li class="flex items-center space-x-2">
+                            <i data-lucide="github" class="h-4 w-4 text-terminal-muted"></i>
+                            <a href="https://github.com/Jellasreeja-12" target="_blank" class="hover:text-terminal-accent hover:underline">github.com/Jellasreeja-12</a>
+                        </li>
+                        <li class="flex items-center space-x-2">
+                            <i data-lucide="mail" class="h-4 w-4 text-terminal-muted"></i>
+                            <a href="mailto:sreejajella21@gmail.com" class="hover:text-terminal-accent hover:underline">sreejajella21@gmail.com</a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="mt-4 text-xs text-terminal-muted">
+                    Click links above or interact through the main terminal window to view projects directly.
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Shell Terminal Footer -->
+    <footer class="border-t border-terminal-border/40 py-6 bg-terminal-window/40 text-center font-mono text-xs text-terminal-muted">
+        <div class="max-w-5xl mx-auto px-4 flex flex-col sm:flex-row justify-between items-center gap-2">
+            <span>&copy; 2026 Sreeja Jella. Powered by Terminal Core.</span>
+            <div class="flex space-x-3">
+                <a href="https://github.com/Jellasreeja-12" target="_blank" class="hover:text-terminal-accent">GitHub</a>
+                <span>&middot;</span>
+                <a href="https://www.linkedin.com/in/sreeja-jella" target="_blank" class="hover:text-terminal-accent">LinkedIn</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Terminal Content Database -->
+    <div id="content-store" class="hidden">
+        <!-- help command -->
+        <div data-cmd="help">
+            <span class="text-terminal-accent">Available CLI Commands:</span><br>
+            <span class="text-white">&nbsp;&nbsp;ls</span> - List files and project folders<br>
+            <span class="text-white">&nbsp;&nbsp;cat about.md</span> - View background information<br>
+            <span class="text-white">&nbsp;&nbsp;cat skills.sh</span> - Display developer competencies<br>
+            <span class="text-white">&nbsp;&nbsp;ls projects/</span> - Show current code repositories<br>
+            <span class="text-white">&nbsp;&nbsp;cat education.md</span> - Review academic credentials<br>
+            <span class="text-white">&nbsp;&nbsp;cat contact.py</span> - Get communication endpoints<br>
+            <span class="text-white">&nbsp;&nbsp;clear</span> - Clear the terminal log output
+        </div>
+
+        <!-- ls command -->
+        <div data-cmd="ls">
+            <span class="text-terminal-accent">Contents of /home/sreeja:</span><br>
+            <span class="text-white">drwxr-xr-x&nbsp;&nbsp;projects/</span> (Directory containing source directories)<br>
+            <span class="text-terminal-accent">-rw-r--r--&nbsp;&nbsp;about.md</span> (Summary and background bio)<br>
+            <span class="text-terminal-accent">-rwxr-xr-x&nbsp;&nbsp;skills.sh</span> (Skills and programming toolkits)<br>
+            <span class="text-terminal-accent">-rw-r--r--&nbsp;&nbsp;education.md</span> (BVRIT Academic history)<br>
+            <span class="text-terminal-accent">-rw-r--r--&nbsp;&nbsp;contact.py</span> (Contact and developer pipelines)
+        </div>
+
+        <!-- about.md -->
+        <div data-cmd="cat about.md">
+            <span class="text-terminal-accent">--- PROFILE LOG: SREEJA JELLA ---</span><br><br>
+            I am a fourth-year Computer Science and Engineering (Data Science) student at <span class="text-white">Geethanjali College of Engineering and Technology (GCET)</span>. I specialize in designing Python applications, utilizing quantitative models for Machine Learning, and running secure data-driven environments.<br><br>
+            Currently, I am engineering software frameworks that detect local safety hazards, such as system malware threats, alongside exploring multi-dimensional retail analytical patterns for business logic application.
+        </div>
+
+        <!-- skills.sh -->
+        <div data-cmd="cat skills.sh">
+            <span class="text-terminal-accent">-- SREEJA_JELLA_SKILLS --</span><br><br>
+            <span class="text-white">[PROGRAMMING LANGUAGES]</span><br>
+            - Python (Advanced Scripts & Data Processing)<br>
+            - SQL (Relational Schema Analysis)<br>
+            - C & Java (Object Oriented Paradigms)<br>
+            - HTML & CSS (Core Web Interface Styling)<br><br>
+            <span class="text-white">[DATA & ENGINEERING TOOLS]</span><br>
+            - Git & GitHub Version Pipelines<br>
+            - Jupyter Notebook & Google Colab Environments<br>
+            - Visual Studio Code Ecosystem<br>
+            - Pandas, Matplotlib, and Seaborn Libraries
+        </div>
+
+        <!-- ls projects/ -->
+        <div data-cmd="ls projects/">
+            <span class="text-terminal-accent">Total: 2 Key Systems Found in /projects/</span><br><br>
+            
+            <div class="border-l-2 border-terminal-accent pl-3 mb-4">
+                <span class="text-white font-bold">1. Online Retail Data Pipeline Analysis</span><br>
+                <p class="text-terminal-text text-xs my-1">
+                    Executed predictive analysis and transactional patterns segmentation. Built custom plotting mechanisms to interpret retail transactions and customer interactions.
+                </p>
+                <span class="text-xs text-terminal-muted">Tech: Python, Pandas, Matplotlib, Seaborn, Google Colab</span><br>
+                <div class="mt-2 flex space-x-3 text-xs">
+                    <a href="https://github.com/Jellasreeja-12/Online_Retail_Analysis" target="_blank" class="text-terminal-accent underline hover:text-terminal-accentHover">&gt; GitHub Pipeline</a>
+                    <a href="https://colab.research.google.com/drive/12HDAEu6X0AOskK0onGzuICUnPKmH9OaG?usp=sharing" target="_blank" class="text-terminal-accent underline hover:text-terminal-accentHover">&gt; Live Google Colab</a>
+                </div>
+            </div>
+
+            <div class="border-l-2 border-terminal-accent pl-3">
+                <span class="text-white font-bold">2. Malware Detection Tool</span><br>
+                <p class="text-terminal-text text-xs my-1">
+                    Developed a modular Python utility processing signature matches and analyzing executable file properties to flag malicious code blocks securely.
+                </p>
+                <span class="text-xs text-terminal-muted">Tech: Python, OS Level Scripting, File Signatures, Malware Security</span><br>
+                <div class="mt-2 text-xs">
+                    <a href="https://github.com/Jellasreeja-12/Malware-Detection-Tool" target="_blank" class="text-terminal-accent underline hover:text-terminal-accentHover">&gt; GitHub System Source</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- education.md -->
+        <div data-cmd="cat education.md">
+            <span class="text-terminal-accent">-- ACADEMIC CREDENTIALS --</span><br><br>
+            <span class="text-white">Degree:</span> Bachelor of Technology (B.Tech)<br>
+            <span class="text-white">Department:</span> Computer Science and Engineering (Data Science)<br>
+            <span class="text-white">Institution:</span> Geethanjali College of Engineering and Technology (GCET)<br>
+            <span class="text-white">Expected Year:</span> Batch of 2027 (Currently in 4th Year)<br>
+            <span class="text-white">Academics Id:</span> Roll Number 23R11A67B8<br><br>
+            <span class="text-white">Competitive Track Achievements:</span><br>
+            - Flipkart GRiD 5.0 (Software Development Track) &mdash; Semi-Finalist / Pre-Finale Finalist (Representing GCET)
+        </div>
+
+        <!-- contact.py -->
+        <div data-cmd="cat contact.py">
+            <span class="text-terminal-accent">-- NETWORK SOCKETS LIST --</span><br><br>
+            <span class="text-white">Email Socket:</span> <a href="mailto:sreejajella21@gmail.com" class="underline text-terminal-accent">sreejajella21@gmail.com</a><br>
+            <span class="text-white">LinkedIn Hub:</span> <a href="https://www.linkedin.com/in/sreeja-jella" target="_blank" class="underline text-terminal-accent">linkedin.com/in/sreeja-jella</a><br>
+            <span class="text-white">Code Registry (GitHub):</span> <a href="https://github.com/Jellasreeja-12" target="_blank" class="underline text-terminal-accent">github.com/Jellasreeja-12</a><br><br>
+            <span class="text-terminal-muted">Use mailto link or connect on LinkedIn to test handshake connections.</span>
+        </div>
+    </div>
+
+    <!-- Scripts Logic for CLI Simulation -->
+    <script>
+        // Init Lucide Icons
+        lucide.createIcons();
+
+        const terminalScreen = document.getElementById('terminal-screen');
+        const commandLog = document.getElementById('command-log');
+        const typingPrompt = document.getElementById('typing-prompt');
+        const typingText = document.getElementById('typing-text');
+        const cliInput = document.getElementById('cli-input');
+        const terminalForm = document.getElementById('terminal-form');
+        const contentStore = document.getElementById('content-store');
+
+        let isTyping = false;
+
+        // Auto Boot Sequence on Page Load
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                simulateAutoType("cat about.md");
+            }, 800);
+        });
+
+        // Form handler
+        terminalForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            if (isTyping) return;
+            
+            const rawCommand = cliInput.value.trim();
+            cliInput.value = '';
+
+            if (rawCommand) {
+                executeCommand(rawCommand);
+            }
+        });
+
+        // Trigger command from navigation
+        function runCommand(commandString) {
+            if (isTyping) return;
+            simulateAutoType(commandString);
+        }
+
+        // Simulate CLI auto typing
+        function simulateAutoType(commandString) {
+            isTyping = true;
+            typingPrompt.classList.remove('hidden');
+            typingText.textContent = '';
+            
+            let i = 0;
+            const typeSpeed = 45; // ms per char
+
+            const interval = setInterval(() => {
+                typingText.textContent += commandString.charAt(i);
+                i++;
+                terminalScreen.scrollTop = terminalScreen.scrollHeight;
+
+                if (i >= commandString.length) {
+                    clearInterval(interval);
+                    setTimeout(() => {
+                        typingPrompt.classList.add('hidden');
+                        executeCommand(commandString);
+                        isTyping = false;
+                    }, 250);
+                }
+            }, typeSpeed);
+        }
+
+        // Handle Command Execution
+        function executeCommand(commandStr) {
+            const cleanCommand = commandStr.toLowerCase().trim();
+
+            // Create command output nodes
+            const logEntry = document.createElement('div');
+            logEntry.className = "space-y-1.5";
+
+            const userPrompt = document.createElement('div');
+            userPrompt.className = "text-terminal-muted";
+            userPrompt.innerHTML = `<span class="text-terminal-accent">guest@sreeja-jella:~$</span> ${commandStr}`;
+            logEntry.appendChild(userPrompt);
+
+            const resultContainer = document.createElement('div');
+            resultContainer.className = "text-terminal-text pl-2 leading-relaxed animate-fade-in";
+
+            if (cleanCommand === 'clear') {
+                commandLog.innerHTML = '';
+                return;
+            }
+
+            // Find match inside Content Database
+            const matchElement = contentStore.querySelector(`[data-cmd="${cleanCommand}"]`);
+
+            if (matchElement) {
+                resultContainer.innerHTML = matchElement.innerHTML;
+            } else if (cleanCommand === '') {
+                // Empty command does nothing
+                return;
+            } else {
+                resultContainer.innerHTML = `<span class="text-red-500">Command not found: '${commandStr}'.</span><br>Type <span class="text-terminal-accent">help</span> to view available system directories.`;
+            }
+
+            logEntry.appendChild(resultContainer);
+            commandLog.appendChild(logEntry);
+
+            // Scroll Terminal Window down
+            setTimeout(() => {
+                terminalScreen.scrollTop = terminalScreen.scrollHeight;
+            }, 50);
+        }
+    </script>
+</body>
+</html>
